@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # Run the script as ./launch_debug "PACKAGE_NAME" "ACTIVITY_NAME"
 PACKAGE_NAME=$1
 ACTIVITY_NAME=$2
