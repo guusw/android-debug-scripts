@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Signal process to continue
+echo "quit" | jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=$(cat .jdb_port) >/dev/null

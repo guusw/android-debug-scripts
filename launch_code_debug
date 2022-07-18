@@ -1,0 +1,20 @@
+#!/bin/bash
+# Run the script as ./launch_code_debug "PACKAGE_NAME" "ACTIVITY_NAME"
+
+SCRIPT_PATH=$(cd $(dirname "${BASH_SOURCE:-$0}") && pwd)
+
+set -e
+$SCRIPT_PATH/launch_debug $@
+
+JDB_PORT=$(cat .android_dbg/jdb_port)
+LLDB_PORT=$(cat .android_dbg/jdb_port)
+DEVICE_ID=$(cat .android_dbg/device_id)
+PID=$(cat .android_dbg/pid)
+
+# Launch vscode
+CODE_COMMAND="vscode://vadimcn.vscode-lldb/launch/config?{'request':'attach','pid':$PID, 'initCommands': ['platform select remote-android', 'platform connect connect://$DEVICE_ID:$LLDB_PORT', 'settings set target.inherit-env false']}"
+code --open-url "$CODE_COMMAND"
+
+# Resume application
+sleep 0.5
+$SCRIPT_PATH/launch_jdb_continue

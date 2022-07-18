@@ -1,0 +1,31 @@
+#/bin/bash
+# Run the script as ./launch_debug "PACKAGE_NAME" "ACTIVITY_NAME"
+PACKAGE_NAME=$1
+ACTIVITY_NAME=$2
+
+LLDB_PORT=10000
+JDB_PORT=10001
+
+# Change this to the output from `adb devices`
+DEVICE_ID=9ca3f4a6
+
+# Launch package in debug mode
+adb shell am start -D -n "$PACKAGE_NAME/$PACKAGE_NAME.$ACTIVITY_NAME"
+PID=$(adb shell ps | grep "$PACKAGE_NAME" | sed -E -n 's/\w+\s+([0-9]+)\s+.*/\1/p')
+echo "Launched $PACKAGE_NAME with PID $PID"
+
+# Start lldb server
+echo "Killing previous lldb server"
+adb shell run-as $PACKAGE_NAME killall lldb-server 2>&1 >/dev/null
+echo "Starting lldb server"
+adb shell run-as $PACKAGE_NAME ./lldb-server platform --listen "*:$LLDB_PORT" --server &
+
+# Forward
+adb forward tcp:$LLDB_PORT tcp:$LLDB_PORT
+adb forward tcp:$JDB_PORT jdwp:$PID
+
+mkdir -p .android_dbg
+echo $JDB_PORT >.android_dbg/jdb_port
+echo $LLDB_PORT >.android_dbg/jdb_port
+echo $DEVICE_ID >.android_dbg/device_id
+echo $PID >.android_dbg/pid
