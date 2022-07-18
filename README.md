@@ -12,12 +12,7 @@ for launching vscode lldb session:
 
 ## Initial setup
 
-For the first time when installing an app
-
 - Copy `lldb-server` from the android NDK to the /data/local/tmp folder using `adb push <PATH> /data/local/tmp`
-- Install the app
-- Copy `lldb-server` to the apps data folder using `adb run-as <PACKAGE_NAME> cp /data/local/tmp/lldb-server ./`
-
 
 ## Usage
 

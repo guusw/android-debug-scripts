@@ -1,4 +1,6 @@
 #!/bin/bash
 
+JDB_PORT=$(cat .android_dbg/jdb_port)
+
 # Signal process to continue
-echo "quit" | jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=$(cat .jdb_port) >/dev/null
+echo "quit" | jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=$JDB_PORT >/dev/null

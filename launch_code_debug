@@ -6,8 +6,7 @@ SCRIPT_PATH=$(cd $(dirname "${BASH_SOURCE:-$0}") && pwd)
 set -e
 $SCRIPT_PATH/launch_debug $@
 
-JDB_PORT=$(cat .android_dbg/jdb_port)
-LLDB_PORT=$(cat .android_dbg/jdb_port)
+LLDB_PORT=$(cat .android_dbg/lldb_port)
 DEVICE_ID=$(cat .android_dbg/device_id)
 PID=$(cat .android_dbg/pid)
 

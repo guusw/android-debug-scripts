@@ -3,7 +3,7 @@
 PACKAGE_NAME=$1
 ACTIVITY_NAME=$2
 
-LLDB_PORT=10000
+LLDB_PORT=10002
 JDB_PORT=10001
 
 # Change this to the output from `adb devices`
@@ -15,10 +15,12 @@ PID=$(adb shell ps | grep "$PACKAGE_NAME" | sed -E -n 's/\w+\s+([0-9]+)\s+.*/\1/
 echo "Launched $PACKAGE_NAME with PID $PID"
 
 # Start lldb server
+echo "Copying lldb-server"
+adb shell run-as $PACKAGE_NAME "cp -f /data/local/tmp/lldb-server /data/user/0/$PACKAGE_NAME"
 echo "Killing previous lldb server"
-adb shell run-as $PACKAGE_NAME killall lldb-server 2>&1 >/dev/null
+adb shell run-as $PACKAGE_NAME killall lldb-server
 echo "Starting lldb server"
-adb shell run-as $PACKAGE_NAME ./lldb-server platform --listen "*:$LLDB_PORT" --server &
+adb shell run-as $PACKAGE_NAME "./lldb-server platform --listen \"*:$LLDB_PORT\" --server" &
 
 # Forward
 adb forward tcp:$LLDB_PORT tcp:$LLDB_PORT
@@ -26,6 +28,6 @@ adb forward tcp:$JDB_PORT jdwp:$PID
 
 mkdir -p .android_dbg
 echo $JDB_PORT >.android_dbg/jdb_port
-echo $LLDB_PORT >.android_dbg/jdb_port
+echo $LLDB_PORT >.android_dbg/lldb_port
 echo $DEVICE_ID >.android_dbg/device_id
 echo $PID >.android_dbg/pid
