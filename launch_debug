@@ -6,12 +6,10 @@ ACTIVITY_NAME=$2
 LLDB_PORT=10002
 JDB_PORT=10001
 
-# Change this to the output from `adb devices`
-DEVICE_ID=9ca3f4a6
+DEVICE_ID=$(cat .android_dbg/device_id)
 
 echo "> Killing previous lldb server"
 adb shell run-as $PACKAGE_NAME killall lldb-server &
-
 
 # Launch package in debug mode
 INTENT="$PACKAGE_NAME/$PACKAGE_NAME.$ACTIVITY_NAME"
@@ -41,5 +39,4 @@ adb forward tcp:$JDB_PORT jdwp:$PID
 mkdir -p .android_dbg
 echo $JDB_PORT >.android_dbg/jdb_port
 echo $LLDB_PORT >.android_dbg/lldb_port
-echo $DEVICE_ID >.android_dbg/device_id
 echo $PID >.android_dbg/pid
