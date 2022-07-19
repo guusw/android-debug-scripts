@@ -1,0 +1,8 @@
+#!/bin/bash
+# Starts logcat on the currently debugged package
+# writing to logcat.log
+
+SCRIPT_PATH=$(cd $(dirname "${BASH_SOURCE:-$0}") && pwd)
+PID=$(cat .android_dbg/pid)
+
+adb logcat --pid=$PID | tee logcat.log
