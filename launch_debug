@@ -3,8 +3,8 @@
 PACKAGE_NAME=$1
 ACTIVITY_NAME=$2
 
-LLDB_PORT=10002
-JDB_PORT=10001
+LLDB_PORT=10000
+JDB_PORT=9999
 
 DEVICE_ID=$(cat .android_dbg/device_id)
 
@@ -20,8 +20,22 @@ echo "> Copying lldb-server"
 adb shell run-as $PACKAGE_NAME "cp -f /data/local/tmp/lldb-server /data/user/0/$PACKAGE_NAME"
 
 # Start lldb server
-echo "> Starting lldb server"
-adb shell run-as $PACKAGE_NAME "./lldb-server platform --listen \"*:$LLDB_PORT\" --server" &
+LLDB_PORT_SET=""
+while [ -z "$LLDB_PORT_SET" ]
+do
+    echo "> Try starting lldb server on port $LLDB_PORT"
+    adb shell run-as $PACKAGE_NAME "./lldb-server platform --listen \"*:$LLDB_PORT\" --server" &
+    LLDB_SERVER_PID=$!
+
+    # Wait to make sure it doesn't error during startup
+    sleep 0.4
+    if ps -p $LLDB_SERVER_PID >&-; then
+        LLDB_PORT_SET=$LLDB_PORT
+    else
+        LLDB_PORT=$(($LLDB_PORT+1))
+    fi
+done
+LLDB_PORT=$LLDB_PORT_SET
 
 echo "> Waiting for process..."
 while [ -z "$PID" ]
