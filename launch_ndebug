@@ -1,0 +1,20 @@
+#!/bin/bash
+# Run the script as ./launch_code_debug "PACKAGE_NAME" "ACTIVITY_NAME"
+PACKAGE_NAME=$1
+ACTIVITY_NAME=$2
+
+SCRIPT_PATH=$(cd $(dirname "${BASH_SOURCE:-$0}") && pwd)
+source $SCRIPT_PATH/lib
+source $SCRIPT_PATH/jobs
+
+setup_child_job_cleanup
+
+set -e
+
+launch_package
+wait_for_process
+
+$SCRIPT_PATH/logcat &
+LOGCAT_PID=$!
+
+wait $LOGCAT_PID

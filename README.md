@@ -18,31 +18,31 @@ for launching vscode lldb session:
 
 > This stores the ID in current working dir .android_debug folder. So run the other scripts from this same folder
 
-## Usage
+## Scripts & usages
 
-after installing, run:
+### `set_device_id <DEVICE_ID>`
 
-```bash
-launch_debug <PACKAGE_NAME> <ACTIVITY_NAME>
-```
-The application and lldb-server will launch while waiting for the java debugger to attach
+Run the first time from a new working directory to set the device ID to debug on. Use the output from `adb devices`
 
-Run the following to continue execution:
+### `launch_debug <PACKAGE_NAME> <ACTIVITY_NAME>`
 
-```bash
-launch_jdb_continue
-```
+Launches the package/activity in debug mode while waiting for the java debugger to attach
 
-> NOTE: It has to be run from the same folder as you ran the launch_debug command
+### `launch_jdb_continue`
 
-Additionally run:
+Attached the java debugger and signals the previously launched process to continue
 
-```bash
-logcat
-```
+### `launch_ndebug <PACKAGE_NAME> <ACTIVITY_NAME>`
 
-To receive process log output in stdout and the `logcat.log` file in the current working directory
+Launches the package/activity without debugging and streams logcat output to console and `logcat.log` file in the current working directory
 
+### `launch_code_debug <PACKAGE_NAME> <ACTIVITY_NAME>`
+
+Launches the package/activity in debug mode and attaches the vscode debugger from the `vscode-lldb` extension. Does not require manual use of `launch_jdb_continue`
+
+### `logcat`
+
+Receive process log output in stdout and the `logcat.log` file in the current working directory
 
 ## VSCode usage
 
